@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Warehouse Report</title>
+</head>
+<body>
+    <h1>Warehouse Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Total Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% report.forEach(function(item) { %>
+                <tr>
+                    <td><%= item.name %></td>
+                    <td><%= item.quantity %></td>
+                    <td><%= item.totalValue %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <form action="/" method="GET">
+        <button type="submit">Powrót</button>
+    </form>
+</body>
+</html>

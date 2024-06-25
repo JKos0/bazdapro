@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Warehouse Management</title>
+</head>
+<body>
+    <% if (username && username !== 'Nieznajomy') { %>
+        <h1>Witaj, <%= username %>!</h1>
+        <a href="/logout">Wyloguj</a>
+        <a href="/posts/new">Nowy post</a>
+    <% } else { %>
+        <a href="/login">Logowanie</a>
+        <a href="/register">Register</a>
+    <% } %>
+    <h1>Warehouse Management</h1>
+    <h2>Products</h2>
+    <div>
+        <form action="/filterByPrice" method="post">
+            <label for="maxPrice">Max Price:</label>
+            <input type="number" id="maxPrice" name="maxPrice">
+            <button type="submit">Apply Filter</button>
+        </form>
+        <form action="/sortP" method="post">
+            <input type="hidden" name="sortBy" value="name">
+            <button type="submit">Sort Alphabetically</button>
+        </form>
+        <form action="/sortP" method="post">
+            <input type="hidden" name="sortBy" value="price">
+            <button type="submit">Sort by price</button>
+        </form>
+        <form action="/sortP" method="post">
+            <input type="hidden" name="sortBy" value="quantity">
+            <button type="submit">Sort by quantity</button>
+        </form>
+    </div>
+    <ul>
+        <% products.forEach(product => { %>
+            <li>
+                <strong>Name:</strong> <%= product.name %> <br>
+                <strong>Price:</strong> <%= product.price %> <br>
+                <strong>Description:</strong> <%= product.description %> <br>
+                <strong>Quantity:</strong> <%= product.quantity %> <br>
+                <strong>Unit:</strong> <%= product.unit %> <br>
+
+                <!-- Formularz do edytowania produktu -->
+                <form action="/products/<%= product._id %>?_method=PUT" method="POST">
+                    <input type="text" name="name" value="<%= product.name %>" required>
+                    <input type="number" name="price" value="<%= product.price %>" required>
+                    <input type="text" name="description" value="<%= product.description %>">
+                    <input type="number" name="quantity" value="<%= product.quantity %>" required>
+                    <input type="text" name="unit" value="<%= product.unit %>">
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- Formularz do usuwania produktu -->
+                <form action="/products/<%= product._id %>?_method=DELETE" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+
+    <h2>Add New Product</h2>
+    <form action="/products" method="POST">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="number" name="price" placeholder="Price" required>
+        <input type="text" name="description" placeholder="Description">
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <input type="text" name="unit" placeholder="Unit">
+        <button type="submit">Add Product</button>
+    </form>
+    <h3>Report</h3>
+    <form action="/report" method="GET">
+        <button type="submit">Report</button>
+    </form>
+</body>
+</html>
