@@ -106,6 +106,10 @@ app.delete('/products/:id', async (req, res) => {
 //sortowanie
 app.post('/sortP', async (req, res) => {
     const sortBy = req.body.sortBy;
+    let username = 'Nieznajomy';
+    if (req.session.user) {
+        username = req.session.user;
+    }
     let sortedProducts = await Product.find();
     if (sortBy === 'name') {
       sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
@@ -114,17 +118,21 @@ app.post('/sortP', async (req, res) => {
     } else if (sortBy === 'quantity') {
         sortedProducts.sort((a, b) => a.quantity - b.quantity);
     }
-    res.render('index', { products: sortedProducts });
+    res.render('index', { products: sortedProducts, username });
   });
 
 //filtrowanie
   app.post('/filterByPrice', async (req, res) => {
     const maxPrice = parseInt(req.body.maxPrice);
+    let username = 'Nieznajomy';
+    if (req.session.user) {
+        username = req.session.user;
+    }
     let productsData = await Product.find();
     const filteredProducts = productsData.filter(
       (product) => product.price <= maxPrice
     );
-    res.render('index', { products: filteredProducts });
+    res.render('index', { products: filteredProducts, username });
   });
   
 
