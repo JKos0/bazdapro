@@ -21,6 +21,9 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
 
 app.use(
     session({
@@ -43,7 +46,13 @@ app.get('/products', async (req, res) => {
     }
 
     const products = await Product.find();
-    res.render('index', { products, username });
+    if (req.headers['accept'] == 'application/json') {
+        res.json(products);
+    } else {
+        res.render('index', { products, username });
+    };
+    //res.json(products);
+    //res.render('index', { products, username });
 });
 
 // Dodawanie 
@@ -89,14 +98,15 @@ app.put('/products/:id', async (req, res) => {
 // Usuwanie 
 app.delete('/products/:id', async (req, res) => {
     try {
+        if (!req.session.user) {
+            return res.status(400).json({ error: 'Only authorized users can edit and delete products' });
+        }
         const { id } = req.params;
         const product = await Product.findByIdAndDelete(id);
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
         }
-        if (!req.session.user) {
-            return res.status(400).json({ error: 'Only authorized users can edit and delete products' });
-        }
+        
         res.redirect('/products');
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -149,8 +159,14 @@ app.get('/report', async (req, res) => {
                 }
             }
         ]);
+        if (req.headers['accept'] == 'application/json') {
+            res.json(report);
+        } else {
+            res.render('report', { report });
+        };
+        
+        //res.render('report', { report });
         //res.json(report);
-        res.render('report', { report });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
